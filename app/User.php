@@ -4,10 +4,10 @@ namespace App;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, Notifiable;
 
@@ -37,4 +37,15 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+    * These are the JWT methods requierd to use JWTAuth
+    */
+    public function getJWTIdentifier() {
+      return $this->getKey();
+    }
+
+    public function getJWTCustomClaims() {
+      return [];
+    }
 }

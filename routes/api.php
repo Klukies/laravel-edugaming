@@ -22,3 +22,6 @@ Route::get('/home', 'HomeController@index');
 
 //get game image from public folder
 Route::get('image/{fileName}', 'PhotoController@image');
+
+//AUTH routes
+Route::post('auth/register', 'AuthController@register');

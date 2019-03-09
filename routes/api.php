@@ -13,15 +13,26 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+Route::middleware('auth:api')->get('user', function (Request $request) {
     return $request->user();
 });
 
+Route::group([
+  'middleware' => 'api',
+  'prefix' => 'auth'
+], function ($router) {
+
+  //AUTH routes
+  Route::post('login', 'AuthController@login');
+  Route::post('logout', 'AuthController@logout');
+  Route::post('refresh', 'AuthController@refresh');
+  Route::post('me', 'AuthController@me');
+  Route::get('user', 'AuthController@user');
+  Route::get('hidden', 'HomeDataController@hidden');
+});
+
 //Home page data
-Route::get('/home', 'HomeController@index');
+Route::get('/home', 'HomeDataController@index');
+Route::post('register', 'AuthController@register');
 
-//get game image from public folder
-Route::get('image/{fileName}', 'PhotoController@image');
-
-//AUTH routes
-Route::post('auth/register', 'AuthController@register');
+Route::middleware('jwt.auth')->get('/hidden', 'HomeDataController@hidden');

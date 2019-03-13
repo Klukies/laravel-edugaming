@@ -17,11 +17,11 @@ class HomeDataController extends Controller
 
   public function hidden() {
     $games = Game::all();
-    return response(GameResource::collection($games)->jsonSerialize(), 200);
+    return response(GameResource::collection($games)->jsonSerialize(), Response::HTTP_OK);
   }
 
   public function visible() {
     $games = Game::all();
-    return response(GameResource::collection($games)->jsonSerialize(), 200);
+    return response(GameResource::collection($games)->jsonSerialize(), Response::HTTP_OK);
   }
 }

@@ -33,6 +33,6 @@ Route::group([
 
 //Home page data
 Route::get('/home', 'HomeDataController@index');
-Route::post('register', 'AuthController@register');
+Route::post('auth/register', 'AuthController@register');
 
 Route::middleware('jwt.auth')->get('/hidden', 'HomeDataController@hidden');

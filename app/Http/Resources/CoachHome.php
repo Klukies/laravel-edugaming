@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class Game extends JsonResource
+class CoachHome extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,11 +14,6 @@ class Game extends JsonResource
      */
     public function toArray($request)
     {
-      $img_url = url('/images/'.$this->img_name);
-      return [
-        'game_id' => $this->game_id,
-        'title' =>$this->title,
-        'img_url' =>$img_url
-      ];
+        return parent::toArray($request);
     }
 }

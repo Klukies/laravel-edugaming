@@ -7,6 +7,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * @property mixed email
+ * @property mixed name
+ * @property string password
+ */
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
@@ -47,5 +52,13 @@ class User extends Authenticatable implements JWTSubject
 
     public function getJWTCustomClaims() {
       return [];
+    }
+
+    public function review() {
+        return $this->hasMany(Review::class);
+    }
+
+    public function reservation() {
+        return $this->hasMany(Reservation::class);
     }
 }

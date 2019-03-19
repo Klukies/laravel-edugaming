@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use willvincent\Rateable\Rateable;
 
 class Coach extends Model
 {
@@ -10,4 +11,5 @@ class Coach extends Model
         return $this->belongsTo(Game::class, 'game_id');
     }
 
+    use Rateable;
 }

@@ -36,3 +36,6 @@ Route::get('/home', 'HomeDataController@index');
 Route::post('auth/register', 'AuthController@register');
 
 Route::middleware('jwt.auth')->get('/hidden', 'HomeDataController@hidden');
+
+//Coaches page data
+Route::get('/coaches', 'CoachController@index');

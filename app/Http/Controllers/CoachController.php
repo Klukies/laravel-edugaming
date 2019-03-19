@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Coach;
+use DB;
+use App\Http\Resources\Coach as CoachResource;
 use Illuminate\Http\Request;
 
 class CoachController extends Controller
@@ -14,7 +16,14 @@ class CoachController extends Controller
      */
     public function index()
     {
-        //
+        $coaches = DB::table('coaches')
+            ->select('coaches.*')
+            ->leftJoin('ratings', 'coaches.coach_id', '=', 'ratings.rateable_id')
+            ->addSelect(DB::raw('AVG(ratings.rating) as average_rating'))
+            ->groupBy('coaches.coach_id')
+            ->orderBy('average_rating', 'desc')
+            ->paginate(6);
+        return response($coaches->jsonSerialize(), 200);
     }
 
     /**

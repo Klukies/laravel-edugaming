@@ -16,7 +16,8 @@
         "laravel/tinker": "^1.0",
         "nesbot/carbon": "^1.9.0",
         "spatie/laravel-cors": "^1.4",
-        "tymon/jwt-auth": "dev-develop"
+        "tymon/jwt-auth": "dev-develop",
+        "willvincent/laravel-rateable": "1.07"
     },
     "require-dev": {
         "beyondcode/laravel-dump-server": "^1.0",

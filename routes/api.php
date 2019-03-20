@@ -38,4 +38,5 @@ Route::post('auth/register', 'AuthController@register');
 Route::middleware('jwt.auth')->get('/hidden', 'HomeDataController@hidden');
 
 //Coaches page data
+Route::get('/filters', 'FilterController@index');
 Route::get('/coaches', 'CoachController@index');

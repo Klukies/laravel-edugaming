@@ -17,7 +17,7 @@ class CoachController extends Controller
     public function index()
     {
         $coaches = DB::table('coaches')
-            ->select('coaches.*')
+            ->select('coaches.coach_id', 'coaches.username', 'coaches.summary', 'coaches.description', 'coaches.img_url', 'coaches.price', 'coaches.game_id')
             ->leftJoin('ratings', 'coaches.coach_id', '=', 'ratings.rateable_id')
             ->addSelect(DB::raw('AVG(ratings.rating) as average_rating'))
             ->groupBy('coaches.coach_id')

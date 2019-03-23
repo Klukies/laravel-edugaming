@@ -20,7 +20,6 @@ class Rating extends JsonResource
     public static function get() {
         return [
             'rating' => [
-                'Unrated',
                 '1',
                 '2',
                 '3',

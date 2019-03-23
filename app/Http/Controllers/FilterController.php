@@ -14,6 +14,6 @@ class FilterController extends Controller
         $games = GameResource::collection(Game::all());
         $prices = PriceResource::get();
         $ratings = RatingResource::get();
-        return response()->json(['games' => $games, 'prices' => $prices, 'ratings' => $ratings]);
+        return response()->json(['Games' => $games, 'Prices' => $prices, 'Ratings' => $ratings]);
     }
 }

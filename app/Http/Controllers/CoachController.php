@@ -6,6 +6,8 @@ use App\Coach;
 use DB;
 use App\Http\Resources\Coach as CoachResource;
 use Illuminate\Http\Request;
+use function MongoDB\BSON\toJSON;
+use phpDocumentor\Reflection\Types\Integer;
 
 class CoachController extends Controller
 {
@@ -16,14 +18,8 @@ class CoachController extends Controller
      */
     public function index()
     {
-        $coaches = DB::table('coaches')
-            ->select('coaches.coach_id', 'coaches.username', 'coaches.summary', 'coaches.description', 'coaches.img_url', 'coaches.price', 'coaches.game_id')
-            ->leftJoin('ratings', 'coaches.coach_id', '=', 'ratings.rateable_id')
-            ->addSelect(DB::raw('AVG(ratings.rating) as average_rating'))
-            ->groupBy('coaches.coach_id')
-            ->orderBy('average_rating', 'desc')
-            ->paginate(6);
-        return response($coaches->jsonSerialize(), 200);
+        $coaches = $this->getAllCoachesPaginated();
+        return response(CoachResource::collection($coaches)->jsonSerialize(), 200);
     }
 
     /**
@@ -90,5 +86,40 @@ class CoachController extends Controller
     public function destroy(Coach $coach)
     {
         //
+    }
+
+    /*
+     * Get all coaches paginated
+     */
+    private function getAllCoachesPaginated() {
+        return DB::table('coaches')
+            ->select('coaches.*')
+            ->leftJoin('ratings', 'coaches.coach_id', '=', 'ratings.rateable_id')
+            ->addSelect(DB::raw('AVG(ratings.rating) as average_rating'))
+            ->groupBy('coaches.coach_id')
+            ->orderBy('average_rating', 'desc')
+            ->paginate(6);
+    }
+
+    /**
+     * Filter the coaches based on the filters from POST
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function filter(Request $request) {
+        $games = $request->input('games');
+        $coaches = $this->getCoachesByGames($games);
+        //todo prices & ratings
+
+        return response(CoachResource::collection($coaches)->jsonSerialize(), 200);
+    }
+
+    private function getCoachesByGames($games) {
+        if(empty($games)) {
+            return $this->getAllCoachesPaginated();
+        } else {
+            return Coach::whereIn('game_id', $games)->get();
+        }
     }
 }

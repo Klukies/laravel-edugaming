@@ -88,6 +88,35 @@ class CoachController extends Controller
         //
     }
 
+    /**
+     * Filter the coaches based on the filters from POST
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function filter(Request $request) {
+        $games = $request->input('games');
+        $price = $request->input('price');
+        $rating = $request->input('rating');
+
+        if ($games != null) {
+            $coaches = $this->getCoachesByGames($games);
+        } else {
+            $coaches = $this->getAllCoaches();
+        }
+
+        if ($price != null) {
+            $coaches = $this->getCoachesByPrices($coaches, $price);
+        }
+
+        if ($rating != null) {
+            $coaches = $this->getCoachesByRating($coaches, $rating);
+        }
+        //->get() pas op het einde
+        //todo prices & ratings
+        return response(CoachResource::collection($coaches->get())->jsonSerialize(), 200);
+    }
+
     /*
      * Get all coaches
      */
@@ -100,24 +129,23 @@ class CoachController extends Controller
             ->orderBy('average_rating', 'desc');
     }
 
-    /**
-     * Filter the coaches based on the filters from POST
+    /*
+     * Get all coaches if they teach a certain game
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
-    public function filter(Request $request) {
-        $games = $request->input('games');
-        $price = $request->input('price');
-        $coaches = $this->getCoachesByGames($games);
-        if ($price != null) {
-            $coaches = $this->getCoachesByPrices($coaches, $price);
-        }
-        //->get() pas op het einde
-        //todo prices & ratings
-        return response(CoachResource::collection($coaches->get())->jsonSerialize(), 200);
+    private function getCoachesByGames($games) {
+        return DB::table('coaches')
+            ->select('coaches.*')
+            ->whereIn('game_id', $games)
+            ->leftJoin('ratings', 'coaches.coach_id', '=', 'ratings.rateable_id')
+            ->addSelect(DB::raw('AVG(ratings.rating) as average_rating'))
+            ->groupBy('coaches.coach_id')
+            ->orderBy('average_rating', 'desc');
     }
 
+    /*
+     * Get all coaches if the cost per hour is lower or more then $price
+     */
     private function getCoachesByPrices($coaches, $price) {
         if ($price == "50+") {
             return $coaches->where('price', '>', '50');
@@ -126,11 +154,11 @@ class CoachController extends Controller
         }
     }
 
-    private function getCoachesByGames($games) {
-        if(empty($games)) {
-            return $this->getAllCoaches();
-        } else {
-            return Coach::whereIn('game_id', $games);
-        }
+    /*
+     * Get all coaches if they have a higher or equal rating as $rating
+     */
+    private function getCoachesByRating($coaches, $rating) {
+        return $coaches->having('average_rating', '>=', $rating);
     }
+
 }

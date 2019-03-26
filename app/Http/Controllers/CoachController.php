@@ -18,7 +18,7 @@ class CoachController extends Controller
      */
     public function index()
     {
-        $coaches = $this->getAllCoachesPaginated();
+        $coaches = $this->getAllCoaches()->paginate(6);
         return response(CoachResource::collection($coaches)->jsonSerialize(), 200);
     }
 
@@ -89,16 +89,15 @@ class CoachController extends Controller
     }
 
     /*
-     * Get all coaches paginated
+     * Get all coaches
      */
-    private function getAllCoachesPaginated() {
+    private function getAllCoaches() {
         return DB::table('coaches')
             ->select('coaches.*')
             ->leftJoin('ratings', 'coaches.coach_id', '=', 'ratings.rateable_id')
             ->addSelect(DB::raw('AVG(ratings.rating) as average_rating'))
             ->groupBy('coaches.coach_id')
-            ->orderBy('average_rating', 'desc')
-            ->paginate(6);
+            ->orderBy('average_rating', 'desc');
     }
 
     /**
@@ -109,17 +108,29 @@ class CoachController extends Controller
      */
     public function filter(Request $request) {
         $games = $request->input('games');
+        $price = $request->input('price');
         $coaches = $this->getCoachesByGames($games);
+        if ($price != null) {
+            $coaches = $this->getCoachesByPrices($coaches, $price);
+        }
+        //->get() pas op het einde
         //todo prices & ratings
+        return response(CoachResource::collection($coaches->get())->jsonSerialize(), 200);
+    }
 
-        return response(CoachResource::collection($coaches)->jsonSerialize(), 200);
+    private function getCoachesByPrices($coaches, $price) {
+        if ($price == "50+") {
+            return $coaches->where('price', '>', '50');
+        } else {
+            return $coaches->where('price', '<', $price);
+        }
     }
 
     private function getCoachesByGames($games) {
         if(empty($games)) {
-            return $this->getAllCoachesPaginated();
+            return $this->getAllCoaches();
         } else {
-            return Coach::whereIn('game_id', $games)->get();
+            return Coach::whereIn('game_id', $games);
         }
     }
 }

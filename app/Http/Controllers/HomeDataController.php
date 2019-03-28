@@ -14,7 +14,7 @@ class HomeDataController extends Controller
   public function index()
   {
     $games = GameResource::collection(Game::all())->jsonSerialize();
-    $coaches = CoachHomeResource::collection(Coach::inRandomOrder()->take(1)->get())->jsonSerialize();
+    $coaches = CoachHomeResource::collection(Coach::inRandomOrder()->take(2)->get())->jsonSerialize();
     return response()->json(['games' => $games, 'coaches' => $coaches]);
   }
 

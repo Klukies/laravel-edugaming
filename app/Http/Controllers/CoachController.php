@@ -49,9 +49,10 @@ class CoachController extends Controller
      * @param  \App\Coach  $coach
      * @return \Illuminate\Http\Response
      */
-    public function show(Coach $coach)
+    public function show(String $username)
     {
-        //
+        $coach = Coach::where('username', $username)->get();
+        return response(CoachResource::collection($coach), 200);
     }
 
     /**

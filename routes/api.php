@@ -41,3 +41,4 @@ Route::middleware('jwt.auth')->get('/hidden', 'HomeDataController@hidden');
 Route::get('/filters', 'FilterController@index');
 Route::get('/coaches', 'CoachController@index');
 Route::post('/coaches/filter', 'CoachController@filter');
+Route::get('/coaches/{username}', 'CoachController@show');

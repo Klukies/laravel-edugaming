@@ -113,8 +113,6 @@ class CoachController extends Controller
         if ($rating != null) {
             $coaches = $this->getCoachesByRating($coaches, $rating);
         }
-        //->get() pas op het einde
-        //todo prices & ratings
         return response(CoachResource::collection($coaches->get())->jsonSerialize(), 200);
     }
 

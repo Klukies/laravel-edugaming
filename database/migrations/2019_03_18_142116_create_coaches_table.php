@@ -22,8 +22,10 @@ class CreateCoachesTable extends Migration
             $table->text('description')->nullable();
             $table->string('img_url')->default("http://localhost:3000/images/standard_avatar.png");
             $table->integer('price')->default(10);
-            $table->integer('game_id')->default(1)->references('game_id')->on('games')->onDelete('cascade');
+            $table->unsignedBigInteger('game_id')->nullable();
             $table->timestamps();
+
+            $table->foreign('game_id')->references('game_id')->on('games')->onDelete('cascade');
         });
     }
 

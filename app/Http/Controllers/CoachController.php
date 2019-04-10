@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Coach;
+use App\Review;
 use DB;
+use App\Http\Resources\Coaches as CoachesResource;
 use App\Http\Resources\Coach as CoachResource;
 use Illuminate\Http\Request;
-use function MongoDB\BSON\toJSON;
-use phpDocumentor\Reflection\Types\Integer;
 
 class CoachController extends Controller
 {
@@ -19,7 +19,7 @@ class CoachController extends Controller
     public function index()
     {
         $coaches = $this->getAllCoaches()->paginate(6);
-        return response(CoachResource::collection($coaches)->jsonSerialize(), 200);
+        return response(CoachesResource::collection($coaches)->jsonSerialize(), 200);
     }
 
     /**
@@ -51,7 +51,7 @@ class CoachController extends Controller
      */
     public function show(String $username)
     {
-        $coach = Coach::where('username', $username)->get();
+        $coach = Coach::where('username', $username)->with('reviews')->get();
         return response(CoachResource::collection($coach), 200);
     }
 
@@ -110,10 +110,10 @@ class CoachController extends Controller
             $coaches = $this->getCoachesByPrices($coaches, $price);
         }
 
-        if ($rating != null) {
+        if ($rating != -1) {
             $coaches = $this->getCoachesByRating($coaches, $rating);
         }
-        return response(CoachResource::collection($coaches->get())->jsonSerialize(), 200);
+        return response(CoachesResource::collection($coaches->get())->jsonSerialize(), 200);
     }
 
     /*

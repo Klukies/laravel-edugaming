@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Review;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Exceptions\JWTException;
 
 class ReviewController extends Controller
 {
@@ -35,7 +36,23 @@ class ReviewController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            if (! $user = \JWTAuth::parseToken()->authenticate()) {
+                return response()->json(['user_not_found'], 404);
+            }
+        } catch (JWTException $e) {
+            return response()->json($e->getMessage(), 404);
+        }
+
+        $review = new Review;
+        $review->user_id = $user->id;
+        $review->coach_id = $request->coach_id;
+        $review->review = $request->review;
+        $review->rating = $request->rating;
+
+        $review->save();
+
+        return response()->json(["message" => "Successfully saved your review"]);
     }
 
     /**

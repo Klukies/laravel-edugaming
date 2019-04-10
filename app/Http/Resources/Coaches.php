@@ -3,9 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\Review as ReviewResource;
 
-class Coach extends JsonResource
+class Coaches extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -23,8 +22,7 @@ class Coach extends JsonResource
             'img_url' => $this->img_url,
             'price' => $this->price,
             'game_id' => $this->game_id,
-            'average_rating' => $this->average_rating,
-            'reviews' => ReviewResource::collection($this->reviews),
+            'average_rating' => $this->average_rating
         ];
     }
 }

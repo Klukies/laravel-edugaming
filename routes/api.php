@@ -42,3 +42,7 @@ Route::get('/filters', 'FilterController@index');
 Route::get('/coaches', 'CoachController@index');
 Route::post('/coaches/filter', 'CoachController@filter');
 Route::get('/coaches/{username}', 'CoachController@show');
+
+//Coach page data
+Route::post('/reservation', 'ReservationController@store')->middleware('jwt.auth');
+Route::post('/review', 'ReviewController@store')->middleware('jwt.auth');

@@ -11,5 +11,9 @@ class Coach extends Model
         return $this->belongsTo(Game::class, 'game_id');
     }
 
+    public function reviews() {
+        return $this->hasMany(Review::class, 'coach_id', 'coach_id');
+    }
+
     use Rateable;
 }

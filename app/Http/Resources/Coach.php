@@ -23,7 +23,7 @@ class Coach extends JsonResource
             'img_url' => $this->img_url,
             'price' => $this->price,
             'game_id' => $this->game_id,
-            'average_rating' => $this->average_rating,
+            'average_rating' => $this->ratings()->avg('rating'),
             'reviews' => ReviewResource::collection($this->reviews),
         ];
     }

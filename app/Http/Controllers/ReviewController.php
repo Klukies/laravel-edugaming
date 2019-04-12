@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Rating;
 use App\Review;
+use App\Http\Resources\Review as ReviewResource;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\JWTException;
 
@@ -49,10 +51,17 @@ class ReviewController extends Controller
         $review->coach_id = $request->coach_id;
         $review->review = $request->review;
         $review->rating = $request->rating;
-
         $review->save();
 
-        return response()->json(["message" => "Successfully saved your review"]);
+        $rating = new Rating;
+        $rating->coach_id = $request->coach_id;
+        $rating->user_id = $user->id;
+        $rating->rating = $request->rating;
+        $rating->save();
+
+        return response()->json(ReviewResource::collection(
+            Review::where('coach_id', $request->coach_id)->OrderBy('reviews.created_at', 'DESC')->take(6)->get()
+        ), 200);
     }
 
     /**

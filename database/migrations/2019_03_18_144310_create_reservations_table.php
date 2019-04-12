@@ -17,6 +17,8 @@ class CreateReservationsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('coach_id');
             $table->dateTime('reservation_time');
+            $table->boolean('confirmed')->default(false);
+            $table->integer('rating');
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

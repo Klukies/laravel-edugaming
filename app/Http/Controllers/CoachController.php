@@ -8,6 +8,7 @@ use DB;
 use App\Http\Resources\Coaches as CoachesResource;
 use App\Http\Resources\Coach as CoachResource;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 
 class CoachController extends Controller
 {
@@ -18,7 +19,7 @@ class CoachController extends Controller
      */
     public function index()
     {
-        $coaches = $this->getAllCoaches()->paginate(6);
+        $coaches = Coach::paginate(6);
         return response(CoachesResource::collection($coaches)->jsonSerialize(), 200);
     }
 
@@ -51,7 +52,12 @@ class CoachController extends Controller
      */
     public function show(String $username)
     {
-        $coach = Coach::where('username', $username)->with('reviews')->get();
+        $coach = Coach::where('username', $username)
+            ->with(array('reviews' => function ($reviews) {
+                $reviews->orderBy('reviews.created_at', 'DESC');
+                $reviews->take(6);
+            }))
+            ->get();
         return response(CoachResource::collection($coach), 200);
     }
 
@@ -103,7 +109,8 @@ class CoachController extends Controller
         if ($games != null) {
             $coaches = $this->getCoachesByGames($games);
         } else {
-            $coaches = $this->getAllCoaches();
+            $coaches = new Coach;
+            $coaches->newQuery();
         }
 
         if ($price != null) {
@@ -112,20 +119,11 @@ class CoachController extends Controller
 
         if ($rating != -1) {
             $coaches = $this->getCoachesByRating($coaches, $rating);
+        } else {
+            $coaches = $coaches->paginate(6);
         }
-        return response(CoachesResource::collection($coaches->get())->jsonSerialize(), 200);
-    }
 
-    /*
-     * Get all coaches
-     */
-    private function getAllCoaches() {
-        return DB::table('coaches')
-            ->select('coaches.*')
-            ->leftJoin('ratings', 'coaches.coach_id', '=', 'ratings.rateable_id')
-            ->addSelect(DB::raw('AVG(ratings.rating) as average_rating'))
-            ->groupBy('coaches.coach_id')
-            ->orderBy('average_rating', 'desc');
+        return response(CoachesResource::collection($coaches)->jsonSerialize(), 200);
     }
 
     /*
@@ -133,13 +131,7 @@ class CoachController extends Controller
      *
      */
     private function getCoachesByGames($games) {
-        return DB::table('coaches')
-            ->select('coaches.*')
-            ->whereIn('game_id', $games)
-            ->leftJoin('ratings', 'coaches.coach_id', '=', 'ratings.rateable_id')
-            ->addSelect(DB::raw('AVG(ratings.rating) as average_rating'))
-            ->groupBy('coaches.coach_id')
-            ->orderBy('average_rating', 'desc');
+        return Coach::whereIn('game_id', $games);
     }
 
     /*
@@ -157,7 +149,14 @@ class CoachController extends Controller
      * Get all coaches if they have a higher or equal rating as $rating
      */
     private function getCoachesByRating($coaches, $rating) {
-        return $coaches->having('average_rating', '>=', $rating);
+        $coaches = $coaches->paginate(6);
+        $coachesByRating = new Collection();
+        foreach ($coaches as $coach) {
+            if($coach->ratings()->avg('rating') >= $rating) {
+                $coachesByRating->push($coach);
+            }
+        }
+        return $coachesByRating;
     }
 
 }

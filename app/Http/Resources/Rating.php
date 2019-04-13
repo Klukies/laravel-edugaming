@@ -19,13 +19,11 @@ class Rating extends JsonResource
 
     public static function get() {
         return [
-            'rating' => [
                 '1',
                 '2',
                 '3',
                 '4',
                 '5'
-            ]
         ];
     }
 }

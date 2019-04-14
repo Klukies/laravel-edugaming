@@ -20,7 +20,7 @@ class CreateCoachesTable extends Migration
             $table->string('password');
             $table->text('summary')->nullable();
             $table->text('description')->nullable();
-            $table->string('img_url')->default("http://localhost:3000/images/standard_avatar.png");
+            $table->string('img_url')->default("standard_avatar.png");
             $table->integer('price')->default(10);
             $table->unsignedBigInteger('game_id')->nullable();
             $table->timestamps();

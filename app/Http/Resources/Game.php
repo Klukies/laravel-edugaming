@@ -14,11 +14,13 @@ class Game extends JsonResource
      */
     public function toArray($request)
     {
-      $img_url = url('/images/'.$this->img_name);
+      $img_url = url('/images/'. $this->img_name);
+      $old_browser_img_url = url('/images/' . $this->old_browser_img_name);
       return [
-        'game_id' => $this->game_id,
-        'title' =>$this->title,
-        'img_url' =>$img_url
-      ];
+          'game_id' => $this->game_id,
+          'title' => $this->title,
+          'img_url' => $img_url,
+          'old_browser_img_url' => $old_browser_img_url,
+       ];
     }
 }

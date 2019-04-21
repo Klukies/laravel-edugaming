@@ -7,8 +7,8 @@ use App\Http\Resources\Review as ReviewResource;
 use App\Review;
 use Illuminate\Http\Request;
 use App\Game;
-use App\http\Resources\Game as GameResource;
-use App\http\Resources\Coaches as CoachesResource;
+use App\Http\Resources\Game as GameResource;
+use App\Http\Resources\Coaches as CoachesResource;
 use Symfony\Component\HttpFoundation\Response;
 
 class HomeDataController extends Controller

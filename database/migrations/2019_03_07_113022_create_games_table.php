@@ -17,6 +17,7 @@ class CreateGamesTable extends Migration
             $table->bigIncrements('game_id');
             $table->string('title');
             $table->string('img_name');
+            $table->string('old_browser_img_name');
         });
     }
 
